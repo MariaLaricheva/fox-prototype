@@ -62,8 +62,9 @@
 <script type="text/javascript">
 
     const inputData = [...document.getElementsByTagName("input")];
-    const outputData = document.getElementById("values");
+    const outputData = document.getElementById("values"); //просто для вывода значений на экран
     const submitBtn = document.getElementById("submitBtn");
+
     submitBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
@@ -71,25 +72,52 @@
         let newValues = inputData.map(input => input.value);
         rematchValues(newValues);
 
-        console.log("gameWidth", gameWidth);
-        console.log("gameHeight",gameHeight);
-        console.log("foxWeight",foxWeight);
-        console.log("foxVelocity",foxVelocity);
-        console.log("foxJumpForce",foxJumpForce);
-        console.log("gravityForce",gravityForce);
-        console.log("foxBounce",foxBounce);
-        console.log("foxSpriteHeight",foxSpriteHeight);
-        console.log("foxSpriteWidth",foxSpriteWidth);
-        console.log("foxSpriteHeightVisible",foxSpriteHeightVisible);
-        console.log("foxSpriteWidthVisible",foxSpriteWidthVisible);
+        console.log(player);
+        console.log(platforms);
+
+        game.canvas.parentNode.removeChild(game.canvas);
+        game.destroy(true, false)
+        game = null;
+       
+
+        game = new Phaser.Game(createConfig());
+        player = null;
+        platforms = null;
+
+        gscene.scene.remove("scene1");
     
-        console.log("player.body", player.body)
-        //game = Phaser.Game(config);
-        console.log("Phaser.Game", Phaser.Game)
-        //restart();
+
+        game.scene.preload();
+        game.scene.create();
+
+        //game.preload()
+        //game.create;
+        
+        console.log(game);
+        console.log(player);
+        console.log(platforms);
     })
 
-    //import "//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js";
+    function createConfig() {
+        return {
+            type: Phaser.AUTO,
+            width: gameWidth,
+            height: gameHeight,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: gravityForce },
+                    debug: false
+                }
+            },
+            backgroundColor: '#add8e6',
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+    }
 
     let gameWidth = 800;
     let gameHeight = 600;
@@ -123,7 +151,7 @@
     }
     
 
-    let config = {
+    const config = {
         type: Phaser.AUTO,
         width: gameWidth,
         height: gameHeight,
@@ -145,12 +173,10 @@
 
     let game = new Phaser.Game(config);
 
-    function restart() {
-        this.scene.restart();
-    }
+    //let newScene = game.scene.add("scene1", config, true);
+
 
     function preload() {
-        
         this.load.image('ground', 'assets/platform.png');
         this.load.spritesheet('fox',
             'assets/fox.png',
@@ -160,8 +186,6 @@
 
     let platforms;
     let player;
-    let score = 0;
-    let scoreText;
 
     function create() {
         platforms = this.physics.add.staticGroup();
