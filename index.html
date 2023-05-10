@@ -8,7 +8,9 @@
         body {
             margin: 0 0 0 50px;
             display: flex;
-            gap: 50px
+            /* grid-template-columns: 200px 1fr; */
+            gap: 50px;
+            align-items: flex-start;
         }
         form {
             display: flex;
@@ -18,86 +20,91 @@
 </head>
 <body>
     <form action="">
-    <h4>ЭКРАН</h4>
-    <label>Ширина поля (пиксели)
-        <input type="number" value="800"> 
-    </label>
-    <label>Высота поля (пиксели)
-        <input type="number" value="600"> 
-    </label>
-    <h4>ФИЗИКА</h4>
-    <label>Вес лисы
-        <input type="number" value="350"> 
-    </label>
-    <label>Скорость лисы
-        <input type="number" value="260"> 
-    </label>
-    <label>Сила прыжка
-        <input type="number" value="570"> 
-    </label>
-    <label>Гравитация
-        <input type="number" value="300"> 
-    </label>
-    <label>Отталкивание
-        <input type="number" value="0.2"> 
-    </label>
-    <h4>СПРАЙТ</h4>
-    <label>Ширина загруженного спрайта (пиксели)
-        <input type="number" value="96"> 
-    </label>
-    <label>Высота загруженного спрайта (пиксели)
-        <input type="number" value="96"> 
-    </label>
-    <label>Ширина отображаемого спрайта (пиксели)
-        <input type="number" value="96"> 
-    </label>
-    <label>Высота отображаемого спрайта (пиксели)
-        <input type="number" value="96"> 
-    </label>
+        <h4>ЭКРАН</h4>
+        <label>Ширина поля (пиксели)
+            <input type="number" value="800" title="gameWidth"> 
+        </label>
+        <label>Высота поля (пиксели)
+            <input type="number" value="600" title="gameHeight"> 
+        </label>
+        <h4>ФИЗИКА</h4>
+        <label>Вес лисы
+            <input type="number" value="350" title="foxWeight"> 
+        </label>
+        <label>Скорость лисы
+            <input type="number" value="260" title="foxVelocity"> 
+        </label>
+        <label>Сила прыжка
+            <input type="number" value="570" title="foxJumpForce"> 
+        </label>
+        <label>Гравитация
+            <input type="number" value="300" title="gravityForce"> 
+        </label>
+        <label>Отталкивание
+            <input type="number" value="0.2" title="foxBounce"> 
+        </label>
+        <h4>СПРАЙТ</h4>
+        <label>Высота загруженного спрайта (пиксели)
+            <input type="number" value="96" title="foxSpriteHeight"> 
+        </label>
+        <label>Ширина загруженного спрайта (пиксели)
+            <input type="number" value="96" title="foxSpriteWidth"> 
+        </label>
+        <label>Высота отображаемого спрайта (пиксели)
+            <input type="number" value="96" title="foxSpriteHeightVisible"> 
+        </label>
+        <label>Ширина отображаемого спрайта (пиксели)
+            <input type="number" value="96" title="foxSpriteWidthVisible"> 
+        </label>
+        <button type="submit" id="submitBtn">Применить</button>
 
-    <button type="submit" id="submitBtn">Применить</button>
+        <h4>ТЕКУЩИЕ ЗНАЧЕНИЯ</h4>
+        <p id="valuesDisplay">
 
-    <p id="values"></p>
- </form>
+        </p>
+        <button type="submit" id="copyToClipBoardBtn">Скопировать в буфер обмена</button>
+    </form>
+
 <script type="text/javascript">
 
-    const inputData = [...document.getElementsByTagName("input")];
-    const outputData = document.getElementById("values"); //просто для вывода значений на экран
-    const submitBtn = document.getElementById("submitBtn");
+    const inputData = [...document.getElementsByTagName("input")]; //поля с вводом значения
+    const submitBtn = document.getElementById("submitBtn"); //кнопка применения изменений
+    const valuesDisplay = document.getElementById("valuesDisplay"); //отображение значений
+    const copyToClipBoardBtn = document.getElementById("copyToClipBoardBtn"); //кнопка копирования в буфер обмена
 
-    submitBtn.addEventListener("click", (e) => {
-        e.preventDefault();
+    /*---- ВСЕ ИЗМЕНЯЕМЫЕ ПАРАМЕТРЫ ----*/
+    let gameWidth = 800;
+    let gameHeight = 600;
 
-        outputData.innerText = inputData.reduce((result, input) => result+input.value.toString(), "");
-        let newValues = inputData.map(input => input.value);
-        rematchValues(newValues);
+    let foxWeight = 350;
+    let foxVelocity = 260;
+    let foxJumpForce = 570;
+    let gravityForce = 300;
+    let foxBounce = 0.2;
 
-        console.log(player);
-        console.log(platforms);
+    let foxSpriteHeight = 96;
+    let foxSpriteWidth = 96;
+    let foxSpriteHeightVisible = 96;
+    let foxSpriteWidthVisible = 96;
 
-        game.canvas.parentNode.removeChild(game.canvas);
-        game.destroy(true, false)
-        game = null;
-       
+    /*---- ОБНОВЛЕНИЕ ПЕРЕМЕННЫХ ----*/
+    function rematchValues(newValues) {
+        [   
+            gameWidth, 
+            gameHeight,
+            foxWeight,
+            foxVelocity, 
+            foxJumpForce, 
+            gravityForce, 
+            foxBounce, 
+            foxSpriteHeight, 
+            foxSpriteWidth, 
+            foxSpriteHeightVisible, 
+            foxSpriteWidthVisible 
+        ] = newValues;
+    }
 
-        game = new Phaser.Game(createConfig());
-        player = null;
-        platforms = null;
-
-        gscene.scene.remove("scene1");
-    
-
-        game.scene.preload();
-        game.scene.create();
-
-        //game.preload()
-        //game.create;
-        
-        console.log(game);
-        console.log(player);
-        console.log(platforms);
-    })
-
+    /*---- СОЗДАНИЕ КОНФИГА ----*/
     function createConfig() {
         return {
             type: Phaser.AUTO,
@@ -119,69 +126,43 @@
         };
     }
 
-    let gameWidth = 800;
-    let gameHeight = 600;
+    /*---- ОБНОВЛЕНИЕ ИГРЫ ----*/
+    submitBtn.addEventListener("click", (e) => {
+        e.preventDefault(); //чтобы страница не обновлялась и изменения не сбрасывались
+        let newValues = inputData.map(input => Number(input.value));
+        rematchValues(newValues);
 
-    let foxWeight = 350;
-    let foxVelocity = 260;
-    let foxJumpForce = 570;
-    let gravityForce = 300;
-    let foxBounce = 0.2;
+        game.canvas.parentNode.removeChild(game.canvas);
+        game.destroy(true, false);
+       
+        game = new Phaser.Game(createConfig());
+        displayValues();
+    })
 
-    let foxSpriteHeight = 96;
-    let foxSpriteWidth = 96;
-    let foxSpriteHeightVisible = 96;
-    let foxSpriteWidthVisible = 96;
-
-
-    function rematchValues(newValues) {
-        [   
-            gameWidth, 
-            gameHeight,
-            foxWeight,
-            foxVelocity, 
-            foxJumpForce, 
-            gravityForce, 
-            foxBounce, 
-            foxSpriteHeight, 
-            foxSpriteWidth, 
-            foxSpriteHeightVisible, 
-            foxSpriteWidthVisible 
-        ] = newValues;
+    /*---- ОТОБРАЖЕНИЕ ТЕКУЩИХ ЗНАЧЕНИЙ ----*/
+    function displayValues() {
+        valuesDisplay.innerText = inputData.reduce((red, val) => `${red} \n ${val.title} = ${val.value}`, "");
     }
-    
 
-    const config = {
-        type: Phaser.AUTO,
-        width: gameWidth,
-        height: gameHeight,
-        physics: {
-            default: 'arcade',
-            arcade: {
-                gravity: { y: gravityForce },
-                debug: false
-            }
-        },
-        backgroundColor: '#add8e6',
-        scene: {
-            preload: preload,
-            create: create,
-            update: update
-        }
-    };
+    /*---- СОХРАНЕНИЕ ДАННЫХ В БУФЕР ОБМЕНА ----*/
+    copyToClipBoardBtn.addEventListener("click", (e) => {
+        e.preventDefault(); //чтобы страница не обновлялась и изменения не сбрасывались
+        copyToClipBoard(valuesDisplay.innerText);
+        alert("скопировано в буфер обмена");
+    })
+    function copyToClipBoard (text) {
+        return navigator.clipboard.writeText(text);
+    }
 
-
-    let game = new Phaser.Game(config);
-
-    //let newScene = game.scene.add("scene1", config, true);
-
+    let game = new Phaser.Game(createConfig());
+    displayValues();
 
     function preload() {
         this.load.image('ground', 'assets/platform.png');
         this.load.spritesheet('fox',
             'assets/fox.png',
-            { frameWidth: foxSpriteWidth, frameHeight: foxSpriteHeight }
-        );
+             { frameWidth: foxSpriteWidth, frameHeight: foxSpriteHeight }
+            );
     }
 
     let platforms;
@@ -196,11 +177,11 @@
         platforms.create(50, gameHeight-350, 'ground');
         platforms.create(750, gameHeight-380, 'ground');
 
-        player = this.physics.add.sprite(100, 450, 'fox');
+        player = this.physics.add.sprite(100, 100, 'fox').setScale(foxSpriteHeightVisible/foxSpriteHeight, foxSpriteWidthVisible/foxSpriteWidth);
 
         player.setBounce(foxBounce);
         player.setCollideWorldBounds(true);
-        player.body.setGravityY(foxWeight)
+        player.body.setGravityY(foxWeight);
 
         this.anims.create({
             key: 'left',
@@ -223,8 +204,6 @@
         this.physics.add.collider(player, platforms);
 
         cursors = this.input.keyboard.createCursorKeys();
-
-        console.log("player.body", player.body)
     }
        
     function update() {
